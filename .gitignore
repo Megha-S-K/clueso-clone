@@ -1,0 +1,41 @@
+# =========================
+# ENV FILES (CRITICAL)
+# =========================
+.env
+.env.*
+
+# =========================
+# NODE
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# =========================
+# BUILDS
+# =========================
+dist/
+build/
+dist-ssr/
+
+# =========================
+# UPLOADS / MEDIA FILES
+# =========================
+uploads/
+*.mp4
+*.wav
+*.webm
+
+# =========================
+# EDITORS & OS
+# =========================
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
