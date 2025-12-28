@@ -1,48 +1,33 @@
 import Project from "../models/Project.js";
-import OpenAI from "openai";
+import { generateArticleFromTranscript } from "../services/ai.service.js";
 
-const client = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
-    });
+export const generateArticle = async (req, res) => {
+    try {
+        const { projectId, action } = req.body;
 
-    export const aiAction = async (req, res) => {
-    const { projectId, action } = req.body;
-
-    const project = await Project.findById(projectId);
-    if (!project) {
-        return res.status(404).json({ message: "Project not found" });
-    }
-
-    let instruction = "";
-
-    switch (action) {
-        case "rewrite":
-        instruction = "Rewrite the following content professionally:";
-        break;
-        case "improve":
-        instruction = "Improve clarity and grammar of the following content:";
-        break;
-        case "concise":
-        instruction = "Make the following content concise:";
-        break;
-        case "structure":
-        instruction = "Convert the following content into a step-by-step article:";
-        break;
-        default:
-        instruction = "Rewrite the following content:";
-    }
-
-    const completion = await client.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: [
-        {
-            role: "user",
-            content: `${instruction}\n\n${project.rawContent}`
+        const project = await Project.findById(projectId);
+        if (!project || !project.rawTranscript) {
+        return res.status(400).json({ message: "Transcript not found" });
         }
-        ]
-    });
 
-    res.json({
-        output: completion.choices[0].message.content
-    });
-    };
+        let article;
+        try {
+        article = await generateArticleFromTranscript(
+            project.rawTranscript,
+            action
+        );
+        } catch (aiError) {
+        console.error("Cerebras busy:", aiError.message);
+        article =
+            "AI is currently busy. Please try again in a moment.";
+        }
+
+        project.formattedArticle = article;
+        await project.save();
+
+        res.json({ article });
+
+    } catch (err) {
+        res.status(500).json({ message: "AI generation failed" });
+    }
+};
