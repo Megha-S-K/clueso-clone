@@ -36,8 +36,10 @@ export const generateTranscript = async (req, res) => {
         project.rawTranscript = transcript;
         await project.save();
 
-        // 5️⃣ Optional cleanup
-        fs.unlinkSync(audioPath);
+        if (fs.existsSync(audioPath)) {
+            fs.unlinkSync(audioPath);
+}
+
 
         res.json({ transcript });
 
