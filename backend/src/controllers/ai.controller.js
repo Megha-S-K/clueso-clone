@@ -5,79 +5,89 @@ export const aiGenerate = async (req, res) => {
     try {
         const { projectId, action } = req.body;
 
+        if (!projectId || !action) {
+            return res.status(400).json({ message: "projectId and action are required" });
+        }
+
         const project = await Project.findById(projectId);
+
         if (!project || !project.rawTranscript) {
-        return res.status(400).json({ message: "Transcript not found" });
+            return res.status(400).json({ message: "Transcript not available yet" });
         }
 
         const transcript = project.rawTranscript;
 
-        // 🔹 STRUCTURE MODE (VERY IMPORTANT)
+        /* ======================================================
+        🔹 STRUCTURE MODE (20-SECOND WINDOW + CLEAN STEPS)
+        ====================================================== */
         if (action === "structure") {
-        const prompt = `
-    You are a JSON generator.
+            const project = await Project.findById(projectId);
 
-    Return ONLY valid JSON.
-    Do NOT include explanations, comments, or extra text.
-    Do NOT wrap in markdown.
-    Do NOT include anything outside JSON.
-
-    The JSON MUST strictly follow this schema:
-
-    {
-    "steps": [
-        {
-        "title": "string",
-        "content": "string"
-        }
-    ]
-    }
-
-Transcript:
-${transcript}
-    `;
-
-        const response = await generateArticleFromTranscript(prompt);
-
-        let steps = [];
-
-        try {
-        // Extract JSON block safely
-            const jsonMatch = response.match(/\{[\s\S]*\}/);
-
-            if (!jsonMatch) {
-                throw new Error("No JSON found in AI response");
+            if (!project || !project.rawTranscript) {
+                return res.status(400).json({ message: "Transcript not available" });
             }
 
-            const parsed = JSON.parse(jsonMatch[0]);
-            steps = parsed.steps || [];
+            const prompt = `
+        You are converting a video transcript into a clear step-by-step guide.
 
-            } catch (parseError) {
-            console.error("JSON parse failed:", parseError.message);
-            console.error("Raw AI response:", response);
+        Rules:
+        - Create 5 to 7 steps maximum
+        - Each step must have a meaningful title (NOT "Step 1")
+        - Each step should explain ONE action clearly
+        - Do NOT repeat "Step" inside content
+        - Keep content concise and instructional
 
-            // Fallback: create a single-step structure
-            steps = [
-                {
-                title: "Overview",
-                content: "Unable to auto-structure steps, but transcript was processed successfully."
-                }
-            ];
+        Return ONLY valid JSON in this format:
+
+        {
+            "steps": [
+                { "title": "...", "content": "..." }
+            ]
         }
 
-return res.json({ steps });
+        Transcript:
+        ${project.rawTranscript}
+        `;
 
+            const llmResponse = await generateArticleFromTranscript(prompt);
+
+            const parsed = JSON.parse(llmResponse);
+
+            return res.json({ steps: parsed.steps });
         }
 
-        // 🔹 REWRITE / CONCISE
+
+        /* ======================================================
+        🔹 REWRITE / CONCISE MODES
+        ====================================================== */
         let prompt = "";
 
         if (action === "rewrite") {
-        prompt = `Rewrite this transcript into a professional article:\n${transcript}`;
+            prompt = `
+Rewrite the following transcript into a professional, well-structured article.
+Remove conversational language and improve clarity.
+
+Transcript:
+"""
+${transcript}
+"""
+`;
         }
 
         if (action === "concise") {
-        prompt = `Summarize this transcript clearly and concisely:\n${transcript}`;
+            prompt = `
+Summarize the following transcript into a concise, clear article.
+Focus on key actions and information only.
+
+Transcript:
+"""
+${transcript}
+"""
+`;
+        }
+
+        if (!prompt) {
+            return res.status(400).json({ message: "Invalid action" });
         }
 
         const article = await generateArticleFromTranscript(prompt);
@@ -89,6 +99,6 @@ return res.json({ steps });
 
     } catch (err) {
         console.error("AI generate error:", err);
-        res.status(500).json({ message: "AI generation failed" });
+        return res.status(500).json({ message: "AI generation failed" });
     }
 };
