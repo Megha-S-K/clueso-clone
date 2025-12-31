@@ -112,8 +112,11 @@ export default function Editor() {
     if (loading) {
         return (
         <div className="h-screen flex flex-col items-center justify-center gap-3">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-black"></div>
-            <p className="text-gray-600">Preparing editor…</p>
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gray-300"></div>
+            <p className="text-gray-300 tracking-wide">
+            Preparing your workspace…
+            </p>
+
             {transcribing && (
             <p className="text-sm text-gray-400">
                 Transcribing video, please wait.
@@ -124,31 +127,42 @@ export default function Editor() {
     }
 
     return (
-        <div className="flex h-screen">
+        <div className="flex h-screen bg-transparent">
 
         {/* LEFT PANEL */}
-        <div className="flex-1 p-6 overflow-y-auto">
-            <h2 className="text-xl font-semibold mb-4">Editor</h2>
+        <div className="flex-1 p-8 overflow-y-auto">
+            <h2 className="text-2xl font-bold mb-6 text-white">
+                Video Guide Editor
+                </h2>
 
             {/* ACTION BUTTONS */}
             <div className="flex gap-3 mb-6">
             <button
                 onClick={() => runAIAction("rewrite")}
-                className="px-4 py-2 bg-black text-white rounded"
+                className="px-5 py-2 rounded-lg font-medium
+                            bg-pink-500
+                            hover:opacity-90 transition text-white shadow-md"
+
             >
                 Rewrite
             </button>
 
             <button
                 onClick={() => runAIAction("structure")}
-                className="px-4 py-2 bg-black text-white rounded"
+                className="px-5 py-2 rounded-lg font-medium
+                            bg-pink-500
+                            hover:opacity-90 transition text-white shadow-md"
+
             >
                 Structure
             </button>
 
             <button
                 onClick={() => runAIAction("concise")}
-                className="px-4 py-2 bg-black text-white rounded"
+                className="px-5 py-2 rounded-lg font-medium
+                        bg-pink-500
+                        hover:opacity-90 transition text-white shadow-md"
+
             >
                 Concise
             </button>
@@ -165,7 +179,7 @@ export default function Editor() {
             <textarea
                 value={article}
                 onChange={(e) => setArticle(e.target.value)}
-                className="w-full h-[70vh] border p-4 rounded resize-none"
+                className="w-full h-[70vh] border p-4 rounded resize-none bg-transparent"
                 placeholder="Generated article will appear here..."
             />
             )}

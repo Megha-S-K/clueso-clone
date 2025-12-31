@@ -34,9 +34,13 @@ export default function StructuredView({ steps, screenshots, loading }) {
             return (
             <div
                 key={index}
-                className="border rounded-lg p-5 bg-white shadow-sm"
-            >
-                <h3 className="text-lg font-semibold mb-3">
+                className="rounded-xl p-6 mb-8
+                bg-white/5 backdrop-blur-md
+                border border-white/10
+                shadow-lg"
+>
+
+                <h3 className="text-lg font-semibold mb-3 text-white">
                 Step {index + 1}: {step.title}
                 </h3>
 
@@ -48,13 +52,16 @@ export default function StructuredView({ steps, screenshots, loading }) {
                         key={i}
                         src={`http://localhost:5000/${img}`}
                         alt={`Step ${index + 1} screenshot ${i + 1}`}
-                        className="rounded-lg border object-cover"
+                        className="rounded-lg border border-white/10
+                        shadow-md hover:scale-[1.02]
+                        transition-transform"
+
                     />
                     ))}
                 </div>
                 )}
 
-                <p className="text-gray-700 leading-relaxed">
+                <p className="text-gray-300 leading-relaxed">
                 {step.content}
                 </p>
             </div>

@@ -1,6 +1,7 @@
 export default function Sidebar() {
     return (
-        <div className="w-64 bg-gray-900 text-white p-5 flex flex-col">
+        <div className="w-64 p-6 bg-white/5 backdrop-blur-md
+border-r border-white/10 flex flex-col">
         <h1 className="text-xl font-bold mb-6">Clueso Clone</h1>
 
         <nav className="flex-1 space-y-3">

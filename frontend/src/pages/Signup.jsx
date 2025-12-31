@@ -1,6 +1,6 @@
 import { useState } from "react";
 import api from "../services/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function Signup() {
     const [form, setForm] = useState({});
@@ -13,33 +13,77 @@ export default function Signup() {
     };
 
     return (
-        <div className="h-screen flex items-center justify-center">
-        <form onSubmit={handleSubmit} className="p-6 border rounded w-80">
-            <h2 className="text-xl mb-4">Sign Up</h2>
+        <div className="h-screen flex items-center justify-center 
+                        bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e]">
+            
+            <form
+                onSubmit={handleSubmit}
+                className="w-96 p-8 rounded-2xl
+                            bg-white/5 backdrop-blur-xl
+                            border border-white/10
+                            shadow-2xl"
+            >
+                {/* Title */}
+                <h2 className="text-2xl font-semibold text-white mb-6 text-center">
+                    Create Account
+                </h2>
 
-            <input
-            placeholder="Email"
-            className="border p-2 w-full mb-2"
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-            />
+                {/* Email */}
+                <input
+                    placeholder="Email"
+                    className="w-full mb-3 px-4 py-3 rounded-lg
+                                bg-white/10 text-white placeholder-gray-400
+                                border border-white/10
+                                focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    onChange={(e) =>
+                        setForm({ ...form, email: e.target.value })
+                    }
+                />
 
-            <input
-            placeholder="Password"
-            type="password"
-            className="border p-2 w-full mb-2"
-            onChange={(e) => setForm({ ...form, password: e.target.value })}
-            />
+                {/* Password */}
+                <input
+                    placeholder="Password"
+                    type="password"
+                    className="w-full mb-3 px-4 py-3 rounded-lg
+                                bg-white/10 text-white placeholder-gray-400
+                                border border-white/10
+                                focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    onChange={(e) =>
+                        setForm({ ...form, password: e.target.value })
+                    }
+                />
 
-            <input
-            placeholder="Product Name"
-            className="border p-2 w-full mb-4"
-            onChange={(e) => setForm({ ...form, productName: e.target.value })}
-            />
+                {/* Product Name */}
+                <input
+                    placeholder="Product Name"
+                    className="w-full mb-5 px-4 py-3 rounded-lg
+                                bg-white/10 text-white placeholder-gray-400
+                                border border-white/10
+                                focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    onChange={(e) =>
+                        setForm({ ...form, productName: e.target.value })
+                    }
+                />
 
-            <button className="bg-black text-white w-full p-2">
-            Create Account
-            </button>
-        </form>
+                {/* Button */}
+                <button
+                    type="submit"
+                    className="w-full py-3 rounded-lg
+                                bg-pink-500 hover:bg-pink-600
+                                text-white font-medium
+                                transition-all duration-200"
+                >
+                    Create Account
+                </button>
+
+                {/* Footer */}
+                <p className="text-sm text-gray-400 text-center mt-4">
+                    Already have an account?{" "}
+                    <Link to="/" className="text-pink-400 hover:underline">
+                        Login
+                    </Link>
+                </p>
+            </form>
         </div>
     );
 }
